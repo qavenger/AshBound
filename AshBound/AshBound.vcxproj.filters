@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{c9c5e348-14c6-4ac3-84c5-5c08d49fdeb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header\Editor">
+      <UniqueIdentifier>{C3D62A88-8E0F-4B95-9029-72F767C032C9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Editor">
+      <UniqueIdentifier>{8E91CDEE-8FF2-4F37-A4D3-2EE4994920A0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Runtime">
+      <UniqueIdentifier>{0F7E9D56-1B31-4B3C-A41E-319A5E8A5B69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Runtime\Rendering\RHI">
+      <UniqueIdentifier>{F80D9C6B-47F9-4C74-84B1-96E6E66B4B6F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Runtime\Rendering\DX12">
+      <UniqueIdentifier>{2DB94E90-57EB-4CB8-8F64-DF1979E20DD6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Runtime\Core">
+      <UniqueIdentifier>{4F3B4A60-20E6-4E41-9709-6EFC0BEF1DA3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Runtime\Core\Platform">
+      <UniqueIdentifier>{6F5C9C3B-27D9-4D5C-AE41-8C2D7B1F4B6C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Runtime\Core\Rendering">
+      <UniqueIdentifier>{C5D7C7A8-6C8F-4F5B-AE1B-2D2C0B1C3E9A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Runtime\Core\ColorManagement">
+      <UniqueIdentifier>{3A9F877B-647E-4D6B-9A21-DBB735CE6D2C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime">
+      <UniqueIdentifier>{06C3F4B7-03A8-43B1-8BEA-8A6B1A10D21A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Rendering\DX12">
+      <UniqueIdentifier>{55B1A64F-6A4B-4F07-9F64-4C0B46B18E6B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Core">
+      <UniqueIdentifier>{8F8C1CCB-631F-4E08-AB0E-9CE56C8EBF1B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Core\Platform">
+      <UniqueIdentifier>{1C1A8B36-0A1E-4F50-AE9B-1B7F94C2C4E7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Core\Rendering">
+      <UniqueIdentifier>{B9B61C5F-5F0A-4C59-9F62-0B1F5A73E9A3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Core\ColorManagement">
+      <UniqueIdentifier>{7AD5BBE9-44FB-4BF0-A69B-7D7A66755E63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config">
+      <UniqueIdentifier>{39CBA19A-31A4-4D1C-9000-AE44ACEE2BBE}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\TestPixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Header\Runtime\Core\LogLevels.def">
+      <Filter>Header\Runtime\Core</Filter>
+    </None>
+    <None Include="Config\ColorManagement.ini">
+      <Filter>Config</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Header\Runtime\Core\Viewport.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Rendering\Renderer.h">
+      <Filter>Header\Runtime\Core\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Editor\DebugConsole.h">
+      <Filter>Header\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Editor\ShaderCompiler.h">
+      <Filter>Header\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHI.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIDevice.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHISwapChain.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHICommandQueue.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHICommandList.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIBuffer.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHITexture.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIShader.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Device.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12CommandQueue.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12CommandList.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Buffer.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12SwapChain.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Renderer.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Texture.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Shader.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\HighPrecisionClock.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Transform.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Math\Math.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Math\Matrix2.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Math\Matrix3.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Math\Matrix4.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Math\Quaternion.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Math\VectorRegister.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Math\Vector3.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Log.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Input.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\HidDebugTool.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\CorsairAnalogInput.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\CoreDelegate.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\DisplayManager.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\DisplaySubsystem.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Platform\PlatformMonitorHandle.h">
+      <Filter>Header\Runtime\Core\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Platform\PlatformViewport.h">
+      <Filter>Header\Runtime\Core\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Platform\PlatformWindowHandle.h">
+      <Filter>Header\Runtime\Core\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Platform\WindowsHdrQuery.h">
+      <Filter>Header\Runtime\Core\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Platform\WindowsMonitorHandle.h">
+      <Filter>Header\Runtime\Core\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Platform\WindowsViewport.h">
+      <Filter>Header\Runtime\Core\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Platform\WindowsWindowHandle.h">
+      <Filter>Header\Runtime\Core\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\ColorManagement\ColorManagement.h">
+      <Filter>Header\Runtime\Core\ColorManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\ViewportSubsystem.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Test\EngineTest.h">
+      <Filter>Header\Runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\ColorManagement\ColorSpace.h">
+      <Filter>Header\Runtime\Core\ColorManagement</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Runtime\Core\Viewport.cpp">
+      <Filter>Source\Runtime\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\Rendering\Renderer.cpp">
+      <Filter>Source\Runtime\Core\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\DebugConsole.cpp">
+      <Filter>Source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\ShaderCompiler.cpp">
+      <Filter>Source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12Device.cpp">
+      <Filter>Source\Runtime\Rendering\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12CommandQueue.cpp">
+      <Filter>Source\Runtime\Rendering\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12CommandList.cpp">
+      <Filter>Source\Runtime\Rendering\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12Buffer.cpp">
+      <Filter>Source\Runtime\Rendering\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12SwapChain.cpp">
+      <Filter>Source\Runtime\Rendering\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12Renderer.cpp">
+      <Filter>Source\Runtime\Rendering\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12Texture.cpp">
+      <Filter>Source\Runtime\Rendering\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12Shader.cpp">
+      <Filter>Source\Runtime\Rendering\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\HighPrecisionClock.cpp">
+      <Filter>Source\Runtime\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\Transform.cpp">
+      <Filter>Source\Runtime\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\Log.cpp">
+      <Filter>Source\Runtime\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\Input.cpp">
+      <Filter>Source\Runtime\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\Platform\PlatformViewport.cpp">
+      <Filter>Source\Runtime\Core\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\Platform\WindowsHdrQuery.cpp">
+      <Filter>Source\Runtime\Core\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\Platform\WindowsViewport.cpp">
+      <Filter>Source\Runtime\Core\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\HidDebugTool.cpp">
+      <Filter>Source\Runtime\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\CorsairAnalogInput.cpp">
+      <Filter>Source\Runtime\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\CoreDelegate.cpp">
+      <Filter>Source\Runtime\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\DisplayManager.cpp">
+      <Filter>Source\Runtime\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\DisplaySubsystem.cpp">
+      <Filter>Source\Runtime\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\ColorManagement\ColorManagement.cpp">
+      <Filter>Source\Runtime\Core\ColorManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\ViewportSubsystem.cpp">
+      <Filter>Source\Runtime\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Test\EngineTest.cpp">
+      <Filter>Source\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\ColorManagement\ColorSpace.cpp">
+      <Filter>Source\Runtime\Core\ColorManagement</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
