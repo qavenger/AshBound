@@ -40,3 +40,5 @@
 
 # debug information files
 *.dwo
+x64
+/AshBound/Saved

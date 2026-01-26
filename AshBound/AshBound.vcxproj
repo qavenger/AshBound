@@ -141,6 +141,24 @@
     <None Include="Shaders\ColorSpace.hlsl">
       <FileType>Document</FileType>
     </None>
+    <None Include="Shaders\Common\Common.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Shaders\Common\ViewParameters.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Shaders\SimpleVertexShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Shaders\SimplePixelShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Shaders\FullscreenVertexShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Shaders\FullscreenPixelShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
     <None Include="Shaders\TestPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -167,6 +185,7 @@
     <ClInclude Include="Header\Runtime\Core\Platform\PlatformMonitorHandle.h" />
     <ClInclude Include="Header\Runtime\Core\Platform\PlatformViewport.h" />
     <ClInclude Include="Header\Runtime\Core\Platform\PlatformWindowHandle.h" />
+    <ClInclude Include="Header\Runtime\Core\Platform\WindowsEdidQuery.h" />
     <ClInclude Include="Header\Runtime\Core\Platform\WindowsHdrQuery.h" />
     <ClInclude Include="Header\Runtime\Core\Platform\WindowsMonitorHandle.h" />
     <ClInclude Include="Header\Runtime\Core\Platform\WindowsViewport.h" />
@@ -182,33 +201,63 @@
     <ClInclude Include="Header\Runtime\Core\Math\Math.h" />
     <ClInclude Include="Header\Runtime\Core\Math\Matrix4.h" />
     <ClInclude Include="Header\Runtime\Core\Math\Quaternion.h" />
+    <ClInclude Include="Header\Runtime\Core\Math\Vector2.h" />
     <ClInclude Include="Header\Runtime\Core\Math\Vector3.h" />
+    <ClInclude Include="Header\Runtime\Core\Math\Vector4.h" />
     <ClInclude Include="Header\Runtime\Core\CorsairAnalogInput.h" />
     <ClInclude Include="Header\Runtime\Core\CoreDelegate.h" />
-    <ClInclude Include="Header\Runtime\Core\DisplayManager.h" />
+    <ClInclude Include="Header\Runtime\Core\DisplayInfo.h" />
     <ClInclude Include="Header\Runtime\Core\DisplaySubsystem.h" />
     <ClInclude Include="Header\Runtime\Core\HidDebugTool.h" />
     <ClInclude Include="Header\Runtime\Core\ViewportSubsystem.h" />
     <ClInclude Include="Header\Runtime\Test\EngineTest.h" />
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12CommandList.h" />
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12CommandQueue.h" />
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12ComputeCommandQueue.h" />
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12CopyCommandQueue.h" />
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Buffer.h" />
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12ConstantBuffer.h" />
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Device.h" />
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Format.h" />
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Renderer.h" />
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12RootSignature.h" />
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12GraphicsPipeline.h" />
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12ComputePipeline.h" />
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Shader.h" />
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12SwapChain.h" />
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Texture.h" />
     <ClInclude Include="Header\Runtime\Rendering\RHI\RHI.h" />
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIEnum.h" />
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIEnumMapping.h" />
     <ClInclude Include="Header\Runtime\Rendering\RHI\RHIBuffer.h" />
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIConstantBuffer.h" />
     <ClInclude Include="Header\Runtime\Rendering\RHI\RHICommandList.h" />
     <ClInclude Include="Header\Runtime\Rendering\RHI\RHICommandQueue.h" />
     <ClInclude Include="Header\Runtime\Rendering\RHI\RHIDevice.h" />
     <ClInclude Include="Header\Runtime\Rendering\RHI\RHIShader.h" />
     <ClInclude Include="Header\Runtime\Rendering\RHI\RHISwapChain.h" />
     <ClInclude Include="Header\Runtime\Rendering\RHI\RHITexture.h" />
-    <ClInclude Include="Header\Runtime\Core\Rendering\Renderer.h" />
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIResource.h" />
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIRootSignature.h" />
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIGraphicsPipeline.h" />
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIComputePipeline.h" />
+    <ClInclude Include="Header\Runtime\Rendering\Renderer.h" />
+    <ClInclude Include="Header\Runtime\Rendering\SceneRenderer.h" />
+    <ClInclude Include="Header\Runtime\Rendering\ViewParameters.h" />
     <ClInclude Include="Header\Runtime\Engine.h" />
+    <ClInclude Include="Header\Runtime\Engine\Camera.h" />
+    <ClInclude Include="Header\Runtime\Engine\Component.h" />
+    <ClInclude Include="Header\Runtime\Engine\StaticMesh.h" />
+    <ClInclude Include="Header\Runtime\Engine\Object.h" />
+    <ClInclude Include="Header\Runtime\Engine\RenderComponent.h" />
+    <ClInclude Include="Header\Runtime\Engine\SceneObject.h" />
+    <ClInclude Include="Header\Runtime\Engine\Scene.h" />
+    <ClInclude Include="Header\Runtime\Engine\StaticMeshObject.h" />
+    <ClInclude Include="Header\Runtime\Engine\StaticMeshComponent.h" />
     <ClInclude Include="Header\Runtime\Core\Viewport.h" />
+    <ClInclude Include="Header\Runtime\Core\UI\UserInterface.h" />
+    <ClInclude Include="Header\Runtime\Core\UI\UserInterfaceSubsystem.h" />
+    <ClInclude Include="Header\Runtime\Core\UI\Platform\WindowsImGuiInterface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Editor\DebugConsole.cpp" />
@@ -220,29 +269,48 @@
     <ClCompile Include="Source\Runtime\Core\Input.cpp" />
     <ClCompile Include="Source\Runtime\Core\Input\KeyCode.cpp" />
     <ClCompile Include="Source\Runtime\Core\Platform\PlatformViewport.cpp" />
+    <ClCompile Include="Source\Runtime\Core\Platform\WindowsEdidQuery.cpp" />
     <ClCompile Include="Source\Runtime\Core\Platform\WindowsHdrQuery.cpp" />
+    <ClCompile Include="Source\Runtime\Core\Platform\WindowsMonitorHandle.cpp" />
     <ClCompile Include="Source\Runtime\Core\Platform\WindowsViewport.cpp" />
     <ClCompile Include="Source\Runtime\Core\ColorManagement\ColorManagement.cpp" />
     <ClCompile Include="Source\Runtime\Core\ColorManagement\ColorSpace.cpp" />
     <ClCompile Include="Source\Runtime\Core\Transform.cpp" />
     <ClCompile Include="Source\Runtime\Core\CorsairAnalogInput.cpp" />
     <ClCompile Include="Source\Runtime\Core\CoreDelegate.cpp" />
-    <ClCompile Include="Source\Runtime\Core\DisplayManager.cpp" />
     <ClCompile Include="Source\Runtime\Core\DisplaySubsystem.cpp" />
     <ClCompile Include="Source\Runtime\Core\HidDebugTool.cpp" />
     <ClCompile Include="Source\Runtime\Core\ViewportSubsystem.cpp" />
+    <ClCompile Include="Source\Runtime\Core\UI\UserInterfaceSubsystem.cpp" />
+    <ClCompile Include="Source\Runtime\Core\UI\Platform\WindowsImGuiInterface.cpp" />
+    <ClCompile Include="Source\Runtime\Core\UI\Platform\UserInterfaceFactory.cpp" />
     <ClCompile Include="Source\Runtime\Test\EngineTest.cpp" />
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12Buffer.cpp" />
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12CommandList.cpp" />
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12CommandQueue.cpp" />
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12ComputeCommandQueue.cpp" />
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12CopyCommandQueue.cpp" />
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12Device.cpp" />
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12RootSignature.cpp" />
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12GraphicsPipeline.cpp" />
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12ComputePipeline.cpp" />
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12Renderer.cpp" />
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12Shader.cpp" />
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12SwapChain.cpp" />
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12Texture.cpp" />
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12ConstantBuffer.cpp" />
     <ClCompile Include="Source\main.cpp" />
-    <ClCompile Include="Source\Runtime\Core\Rendering\Renderer.cpp" />
+    <ClCompile Include="Source\Runtime\Rendering\Renderer.cpp" />
+    <ClCompile Include="Source\Runtime\Rendering\SceneRenderer.cpp" />
     <ClCompile Include="Source\Runtime\Engine.cpp" />
+    <ClCompile Include="Source\Runtime\Engine\Camera.cpp" />
+    <ClCompile Include="Source\Runtime\Engine\Component.cpp" />
+    <ClCompile Include="Source\Runtime\Engine\StaticMesh.cpp" />
+    <ClCompile Include="Source\Runtime\Engine\RenderComponent.cpp" />
+    <ClCompile Include="Source\Runtime\Engine\Scene.cpp" />
+    <ClCompile Include="Source\Runtime\Engine\SceneObject.cpp" />
+    <ClCompile Include="Source\Runtime\Engine\StaticMeshObject.cpp" />
+    <ClCompile Include="Source\Runtime\Engine\StaticMeshComponent.cpp" />
     <ClCompile Include="Source\Runtime\Core\Viewport.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

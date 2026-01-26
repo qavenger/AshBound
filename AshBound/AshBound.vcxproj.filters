@@ -25,6 +25,9 @@
     <Filter Include="Header\Runtime">
       <UniqueIdentifier>{0F7E9D56-1B31-4B3C-A41E-319A5E8A5B69}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Runtime\Engine">
+      <UniqueIdentifier>{A9C0F5D1-6B7E-4C3E-9E8F-9D3E7D8E3D6A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header\Runtime\Rendering\RHI">
       <UniqueIdentifier>{F80D9C6B-47F9-4C74-84B1-96E6E66B4B6F}</UniqueIdentifier>
     </Filter>
@@ -37,14 +40,23 @@
     <Filter Include="Header\Runtime\Core\Platform">
       <UniqueIdentifier>{6F5C9C3B-27D9-4D5C-AE41-8C2D7B1F4B6C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header\Runtime\Core\Rendering">
+    <Filter Include="Header\Runtime\Rendering">
       <UniqueIdentifier>{C5D7C7A8-6C8F-4F5B-AE1B-2D2C0B1C3E9A}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header\Runtime\Core\ColorManagement">
       <UniqueIdentifier>{3A9F877B-647E-4D6B-9A21-DBB735CE6D2C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header\Runtime\Core\UI">
+      <UniqueIdentifier>{9D9A4213-5B0C-4E8E-8A2A-2CE3C4B86E11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Runtime\Core\UI\Platform">
+      <UniqueIdentifier>{1B8E2226-0F7B-4B2D-9D6F-9C2F5F5F30F2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Runtime">
       <UniqueIdentifier>{06C3F4B7-03A8-43B1-8BEA-8A6B1A10D21A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Engine">
+      <UniqueIdentifier>{7C0E5D3A-1B24-4F1B-9C3B-6B5F6B5E7D2E}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Runtime\Rendering\DX12">
       <UniqueIdentifier>{55B1A64F-6A4B-4F07-9F64-4C0B46B18E6B}</UniqueIdentifier>
@@ -55,11 +67,17 @@
     <Filter Include="Source\Runtime\Core\Platform">
       <UniqueIdentifier>{1C1A8B36-0A1E-4F50-AE9B-1B7F94C2C4E7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Runtime\Core\Rendering">
+    <Filter Include="Source\Runtime\Rendering">
       <UniqueIdentifier>{B9B61C5F-5F0A-4C59-9F62-0B1F5A73E9A3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Runtime\Core\ColorManagement">
       <UniqueIdentifier>{7AD5BBE9-44FB-4BF0-A69B-7D7A66755E63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Core\UI">
+      <UniqueIdentifier>{D6A7A8C5-6E2A-4E36-92CF-BCB75E3C35D1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runtime\Core\UI\Platform">
+      <UniqueIdentifier>{0D8B8D66-72DA-4DD7-8A5B-51C3E0A4E4D5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Config">
       <UniqueIdentifier>{39CBA19A-31A4-4D1C-9000-AE44ACEE2BBE}</UniqueIdentifier>
@@ -77,13 +95,37 @@
     <None Include="Config\ColorManagement.ini">
       <Filter>Config</Filter>
     </None>
+    <None Include="Shaders\Common\ViewParameters.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Common\Common.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\SimpleVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\SimplePixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\FullscreenVertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\FullscreenPixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Header\Runtime\Core\Viewport.h">
       <Filter>Header\Runtime\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Runtime\Core\Rendering\Renderer.h">
-      <Filter>Header\Runtime\Core\Rendering</Filter>
+    <ClInclude Include="Header\Runtime\Rendering\Renderer.h">
+      <Filter>Header\Runtime\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\SceneRenderer.h">
+      <Filter>Header\Runtime\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\ViewParameters.h">
+      <Filter>Header\Runtime\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Header\Editor\DebugConsole.h">
       <Filter>Header\Editor</Filter>
@@ -92,6 +134,12 @@
       <Filter>Header\Editor</Filter>
     </ClInclude>
     <ClInclude Include="Header\Runtime\Rendering\RHI\RHI.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIEnum.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIEnumMapping.h">
       <Filter>Header\Runtime\Rendering\RHI</Filter>
     </ClInclude>
     <ClInclude Include="Header\Runtime\Rendering\RHI\RHIDevice.h">
@@ -109,16 +157,40 @@
     <ClInclude Include="Header\Runtime\Rendering\RHI\RHIBuffer.h">
       <Filter>Header\Runtime\Rendering\RHI</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIConstantBuffer.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
     <ClInclude Include="Header\Runtime\Rendering\RHI\RHITexture.h">
       <Filter>Header\Runtime\Rendering\RHI</Filter>
     </ClInclude>
     <ClInclude Include="Header\Runtime\Rendering\RHI\RHIShader.h">
       <Filter>Header\Runtime\Rendering\RHI</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIResource.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIRootSignature.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIGraphicsPipeline.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\RHI\RHIComputePipeline.h">
+      <Filter>Header\Runtime\Rendering\RHI</Filter>
+    </ClInclude>
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Device.h">
       <Filter>Header\Runtime\Rendering\DX12</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Format.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12CommandQueue.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12ComputeCommandQueue.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12CopyCommandQueue.h">
       <Filter>Header\Runtime\Rendering\DX12</Filter>
     </ClInclude>
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12CommandList.h">
@@ -127,10 +199,22 @@
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Buffer.h">
       <Filter>Header\Runtime\Rendering\DX12</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12ConstantBuffer.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12SwapChain.h">
       <Filter>Header\Runtime\Rendering\DX12</Filter>
     </ClInclude>
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Renderer.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12RootSignature.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12GraphicsPipeline.h">
+      <Filter>Header\Runtime\Rendering\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Rendering\DX12\DX12ComputePipeline.h">
       <Filter>Header\Runtime\Rendering\DX12</Filter>
     </ClInclude>
     <ClInclude Include="Header\Runtime\Rendering\DX12\DX12Texture.h">
@@ -163,7 +247,13 @@
     <ClInclude Include="Header\Runtime\Core\Math\VectorRegister.h">
       <Filter>Header\Runtime\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Math\Vector2.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
     <ClInclude Include="Header\Runtime\Core\Math\Vector3.h">
+      <Filter>Header\Runtime\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Math\Vector4.h">
       <Filter>Header\Runtime\Core</Filter>
     </ClInclude>
     <ClInclude Include="Header\Runtime\Core\Log.h">
@@ -181,7 +271,7 @@
     <ClInclude Include="Header\Runtime\Core\CoreDelegate.h">
       <Filter>Header\Runtime\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Runtime\Core\DisplayManager.h">
+    <ClInclude Include="Header\Runtime\Core\DisplayInfo.h">
       <Filter>Header\Runtime\Core</Filter>
     </ClInclude>
     <ClInclude Include="Header\Runtime\Core\DisplaySubsystem.h">
@@ -194,6 +284,9 @@
       <Filter>Header\Runtime\Core\Platform</Filter>
     </ClInclude>
     <ClInclude Include="Header\Runtime\Core\Platform\PlatformWindowHandle.h">
+      <Filter>Header\Runtime\Core\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\Platform\WindowsEdidQuery.h">
       <Filter>Header\Runtime\Core\Platform</Filter>
     </ClInclude>
     <ClInclude Include="Header\Runtime\Core\Platform\WindowsHdrQuery.h">
@@ -217,16 +310,55 @@
     <ClInclude Include="Header\Runtime\Test\EngineTest.h">
       <Filter>Header\Runtime</Filter>
     </ClInclude>
+    <ClInclude Include="Header\Runtime\Engine\Camera.h">
+      <Filter>Header\Runtime\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Engine\Component.h">
+      <Filter>Header\Runtime\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Engine\StaticMesh.h">
+      <Filter>Header\Runtime\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Engine\Object.h">
+      <Filter>Header\Runtime\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Engine\RenderComponent.h">
+      <Filter>Header\Runtime\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Engine\SceneObject.h">
+      <Filter>Header\Runtime\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Engine\Scene.h">
+      <Filter>Header\Runtime\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Engine\StaticMeshObject.h">
+      <Filter>Header\Runtime\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Engine\StaticMeshComponent.h">
+      <Filter>Header\Runtime\Engine</Filter>
+    </ClInclude>
     <ClInclude Include="Header\Runtime\Core\ColorManagement\ColorSpace.h">
       <Filter>Header\Runtime\Core\ColorManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\UI\UserInterface.h">
+      <Filter>Header\Runtime\Core\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\UI\UserInterfaceSubsystem.h">
+      <Filter>Header\Runtime\Core\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Header\Runtime\Core\UI\Platform\WindowsImGuiInterface.h">
+      <Filter>Header\Runtime\Core\UI\Platform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Runtime\Core\Viewport.cpp">
       <Filter>Source\Runtime\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Core\Rendering\Renderer.cpp">
-      <Filter>Source\Runtime\Core\Rendering</Filter>
+    <ClCompile Include="Source\Runtime\Rendering\Renderer.cpp">
+      <Filter>Source\Runtime\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\SceneRenderer.cpp">
+      <Filter>Source\Runtime\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\DebugConsole.cpp">
       <Filter>Source\Editor</Filter>
@@ -234,10 +366,25 @@
     <ClCompile Include="Source\Editor\ShaderCompiler.cpp">
       <Filter>Source\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\UI\UserInterfaceSubsystem.cpp">
+      <Filter>Source\Runtime\Core\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\UI\Platform\WindowsImGuiInterface.cpp">
+      <Filter>Source\Runtime\Core\UI\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\UI\Platform\UserInterfaceFactory.cpp">
+      <Filter>Source\Runtime\Core\UI\Platform</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12Device.cpp">
       <Filter>Source\Runtime\Rendering\DX12</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12CommandQueue.cpp">
+      <Filter>Source\Runtime\Rendering\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12ComputeCommandQueue.cpp">
+      <Filter>Source\Runtime\Rendering\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12CopyCommandQueue.cpp">
       <Filter>Source\Runtime\Rendering\DX12</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12CommandList.cpp">
@@ -246,10 +393,22 @@
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12Buffer.cpp">
       <Filter>Source\Runtime\Rendering\DX12</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12ConstantBuffer.cpp">
+      <Filter>Source\Runtime\Rendering\DX12</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12SwapChain.cpp">
       <Filter>Source\Runtime\Rendering\DX12</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12Renderer.cpp">
+      <Filter>Source\Runtime\Rendering\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12RootSignature.cpp">
+      <Filter>Source\Runtime\Rendering\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12GraphicsPipeline.cpp">
+      <Filter>Source\Runtime\Rendering\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Rendering\DX12\DX12ComputePipeline.cpp">
       <Filter>Source\Runtime\Rendering\DX12</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Rendering\DX12\DX12Texture.cpp">
@@ -273,7 +432,13 @@
     <ClCompile Include="Source\Runtime\Core\Platform\PlatformViewport.cpp">
       <Filter>Source\Runtime\Core\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\Platform\WindowsEdidQuery.cpp">
+      <Filter>Source\Runtime\Core\Platform</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Runtime\Core\Platform\WindowsHdrQuery.cpp">
+      <Filter>Source\Runtime\Core\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Core\Platform\WindowsMonitorHandle.cpp">
       <Filter>Source\Runtime\Core\Platform</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Core\Platform\WindowsViewport.cpp">
@@ -288,9 +453,6 @@
     <ClCompile Include="Source\Runtime\Core\CoreDelegate.cpp">
       <Filter>Source\Runtime\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Runtime\Core\DisplayManager.cpp">
-      <Filter>Source\Runtime\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Runtime\Core\DisplaySubsystem.cpp">
       <Filter>Source\Runtime\Core</Filter>
     </ClCompile>
@@ -302,6 +464,30 @@
     </ClCompile>
     <ClCompile Include="Source\Runtime\Test\EngineTest.cpp">
       <Filter>Source\Runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Engine\Camera.cpp">
+      <Filter>Source\Runtime\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Engine\Component.cpp">
+      <Filter>Source\Runtime\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Engine\StaticMesh.cpp">
+      <Filter>Source\Runtime\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Engine\RenderComponent.cpp">
+      <Filter>Source\Runtime\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Engine\Scene.cpp">
+      <Filter>Source\Runtime\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Engine\SceneObject.cpp">
+      <Filter>Source\Runtime\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Engine\StaticMeshObject.cpp">
+      <Filter>Source\Runtime\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Runtime\Engine\StaticMeshComponent.cpp">
+      <Filter>Source\Runtime\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Source\Runtime\Core\ColorManagement\ColorSpace.cpp">
       <Filter>Source\Runtime\Core\ColorManagement</Filter>

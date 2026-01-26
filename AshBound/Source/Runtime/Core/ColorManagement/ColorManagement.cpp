@@ -1,4 +1,5 @@
 #include "Runtime/Core/ColorManagement/ColorManagement.h"
+#include "Runtime/Core/CoreDelegate.h"
 #include "Runtime/Core/Log.h"
 
 #include <algorithm>
@@ -16,6 +17,31 @@ DEFINE_LOG_CATEGORY(LogColorManagement, Info)
 
 namespace
 {
+	void BroadcastColorManagementChange(ColorManagementChange change)
+	{
+		ColorManagementChangedInfo info;
+		info.changedMask = static_cast<uint32_t>(change);
+		CoreDelegate::BroadcastColorManagementChanged(info);
+	}
+
+	RHIEnum::Format ResolveBackbufferFormat(uint32_t backbufferBitDepth)
+	{
+		if (backbufferBitDepth >= 16)
+		{
+			return RHIEnum::Format::RGBA16_FLOAT;
+		}
+		if (backbufferBitDepth >= 10)
+		{
+			return RHIEnum::Format::R10G10B10A2_UNORM;
+		}
+		return RHIEnum::Format::R10G10B10A2_UNORM;
+	}
+
+	bool IsHdrIntent(EOTF eotf)
+	{
+		return eotf == EOTF::PQ || eotf == EOTF::ScRGB;
+	}
+
 	struct ParsedColorSpace
 	{
 		ColorPrimaries primaries;
@@ -113,6 +139,42 @@ namespace
 		}
 	}
 
+	std::wstring OutputGamutToString(OutputGamut gamut)
+	{
+		switch (gamut)
+		{
+		case OutputGamut::DisplayP3:
+			return L"DisplayP3";
+		case OutputGamut::SCRGB:
+			return L"SCRGB";
+		case OutputGamut::BT2020:
+			return L"BT2020";
+		case OutputGamut::SRGB:
+		default:
+			return L"SRGB";
+		}
+	}
+
+	std::wstring EotfToString(EOTF eotf)
+	{
+		switch (eotf)
+		{
+		case EOTF::Linear:
+			return L"Linear";
+		case EOTF::ScRGB:
+			return L"ScRGB";
+		case EOTF::Gamma:
+			return L"Gamma";
+		case EOTF::PQ:
+			return L"PQ";
+		case EOTF::Raw:
+			return L"Raw";
+		case EOTF::SRGB:
+		default:
+			return L"SRGB";
+		}
+	}
+
 	bool TryParsePresetName(const std::wstring& name, WorkingColorSpacePreset& out)
 	{
 		const std::wstring lowered = ToLower(Trim(name));
@@ -144,6 +206,68 @@ namespace
 		if (lowered == L"custom")
 		{
 			out = WorkingColorSpacePreset::Custom;
+			return true;
+		}
+		return false;
+	}
+
+	bool TryParseOutputGamut(const std::wstring& name, OutputGamut& out)
+	{
+		const std::wstring lowered = ToLower(Trim(name));
+		if (lowered == L"srgb")
+		{
+			out = OutputGamut::SRGB;
+			return true;
+		}
+		if (lowered == L"scrgb")
+		{
+			out = OutputGamut::SCRGB;
+			return true;
+		}
+		if (lowered == L"displayp3" || lowered == L"display p3" || lowered == L"p3d65" || lowered == L"p3")
+		{
+			out = OutputGamut::DisplayP3;
+			return true;
+		}
+		if (lowered == L"bt2020" || lowered == L"rec2020")
+		{
+			out = OutputGamut::BT2020;
+			return true;
+		}
+		return false;
+	}
+
+	bool TryParseEotf(const std::wstring& name, EOTF& out)
+	{
+		const std::wstring lowered = ToLower(Trim(name));
+		if (lowered == L"linear")
+		{
+			out = EOTF::Linear;
+			return true;
+		}
+		if (lowered == L"scrgb" || lowered == L"sc-rgb")
+		{
+			out = EOTF::ScRGB;
+			return true;
+		}
+		if (lowered == L"srgb")
+		{
+			out = EOTF::SRGB;
+			return true;
+		}
+		if (lowered == L"gamma")
+		{
+			out = EOTF::Gamma;
+			return true;
+		}
+		if (lowered == L"pq")
+		{
+			out = EOTF::PQ;
+			return true;
+		}
+		if (lowered == L"raw")
+		{
+			out = EOTF::Raw;
 			return true;
 		}
 		return false;
@@ -192,11 +316,31 @@ namespace
 		return definition;
 	}
 
+	uint32_t NormalizeBackbufferBitDepth(uint32_t bitDepth)
+	{
+		return bitDepth == 16 ? 16u : 10u;
+	}
+
+	bool TryParseBackbufferBitDepth(const std::wstring& value, uint32_t& out)
+	{
+		std::wistringstream stream(value);
+		uint32_t depth = 0;
+		if (!(stream >> depth))
+		{
+			return false;
+		}
+		out = NormalizeBackbufferBitDepth(depth);
+		return true;
+	}
+
 	bool LoadWorkingColorSpaceFromConfig(
 		const std::wstring& path,
 		ParsedColorSpace& workingSpace,
 		std::wstring& workingSpaceName,
-		ChromaticAdaptationMethod& adaptation)
+		ChromaticAdaptationMethod& adaptation,
+		uint32_t& backbufferBitDepth,
+		OutputGamut& outputGamut,
+		EOTF& outputEotf)
 	{
 		if (!std::filesystem::exists(path))
 		{
@@ -241,6 +385,18 @@ namespace
 				if (keyLower == L"workingspace" || keyLower == L"workingcolorspace" || keyLower == L"defaultspace" || keyLower == L"space")
 				{
 					workingSpaceName = value;
+				}
+				else if (keyLower == L"backbufferbitdepth" || keyLower == L"backbufferdepth")
+				{
+					TryParseBackbufferBitDepth(value, backbufferBitDepth);
+				}
+				else if (keyLower == L"outputgamut" || keyLower == L"gamut")
+				{
+					TryParseOutputGamut(value, outputGamut);
+				}
+				else if (keyLower == L"eotf")
+				{
+					TryParseEotf(value, outputEotf);
 				}
 				else if (keyLower == L"adaptation" || keyLower == L"chromaticadaptation")
 				{
@@ -352,12 +508,16 @@ namespace
 	}
 
 	bool WriteWorkingColorSpaceConfig(const std::wstring& path, const std::wstring& spaceName,
-		const WorkingColorSpaceDefinition& definition, ChromaticAdaptationMethod adaptation)
+		const WorkingColorSpaceDefinition& definition, ChromaticAdaptationMethod adaptation,
+		uint32_t backbufferBitDepth, OutputGamut outputGamut, EOTF outputEotf)
 	{
 		std::vector<std::wstring> output;
-		output.reserve(7);
+		output.reserve(10);
 		output.push_back(L"[ColorManagement]");
 		output.push_back(L"WorkingColorSpace = " + spaceName);
+		output.push_back(L"BackbufferBitDepth = " + std::to_wstring(backbufferBitDepth));
+		output.push_back(L"OutputGamut = " + OutputGamutToString(outputGamut));
+		output.push_back(L"EOTF = " + EotfToString(outputEotf));
 		output.push_back(L"Red = " + FormatChromaticity(definition.primaries.red));
 		output.push_back(L"Green = " + FormatChromaticity(definition.primaries.green));
 		output.push_back(L"Blue = " + FormatChromaticity(definition.primaries.blue));
@@ -448,7 +608,13 @@ namespace
 	WorkingColorSpacePreset s_workingPreset = WorkingColorSpacePreset::SRGB;
 	ChromaticAdaptationMethod s_defaultAdaptationMethod = ChromaticAdaptationMethod::CAT02;
 	Math::Matrix3 s_srgbToWorkingMatrix = Math::Matrix3::Identity();
+	Math::Matrix3 s_workingToOutputMatrix = Math::Matrix3::Identity();
+	OutputGamut s_cachedOutputGamut = OutputGamut::SRGB;
+	bool s_workingToOutputDirty = true;
+	OutputGamut s_outputGamut = OutputGamut::SRGB;
+	EOTF s_outputEotf = EOTF::Gamma;
 	std::vector<WorkingColorSpaceCallbackEntry> s_colorSpaceChangedCallbacks;
+	uint32_t s_backbufferBitDepth = 10;
 }
 
 void ColorManagement::InitializeDefault()
@@ -457,6 +623,12 @@ void ColorManagement::InitializeDefault()
 	s_workingPreset = WorkingColorSpacePreset::SRGB;
 	s_defaultAdaptationMethod = ChromaticAdaptationMethod::CAT02;
 	s_srgbToWorkingMatrix = Math::Matrix3::Identity();
+	s_workingToOutputMatrix = Math::Matrix3::Identity();
+	s_cachedOutputGamut = OutputGamut::SRGB;
+	s_workingToOutputDirty = true;
+	s_outputGamut = OutputGamut::SRGB;
+	s_outputEotf = EOTF::Gamma;
+	s_backbufferBitDepth = 10;
 }
 
 void ColorManagement::InitializeFromConfig(const std::wstring& configPath)
@@ -470,8 +642,12 @@ void ColorManagement::InitializeFromConfig(const std::wstring& configPath)
 	ParsedColorSpace workingSpaceConfig;
 	std::wstring workingSpaceName;
 	ChromaticAdaptationMethod adaptation = ChromaticAdaptationMethod::CAT02;
+	uint32_t backbufferBitDepth = 10;
+	OutputGamut outputGamut = OutputGamut::SRGB;
+	EOTF outputEotf = EOTF::Gamma;
 
-	if (!LoadWorkingColorSpaceFromConfig(configPath, workingSpaceConfig, workingSpaceName, adaptation))
+	if (!LoadWorkingColorSpaceFromConfig(configPath, workingSpaceConfig, workingSpaceName, adaptation,
+		backbufferBitDepth, outputGamut, outputEotf))
 	{
 		InitializeDefault();
 		LOG(LogColorManagement, Warning, L"ColorManagement: Config not found or failed to load: %s. Using sRGB.", configPath.c_str());
@@ -491,6 +667,10 @@ void ColorManagement::InitializeFromConfig(const std::wstring& configPath)
 	s_workingPreset = resolvedPreset;
 	s_defaultAdaptationMethod = adaptation;
 	s_srgbToWorkingMatrix = ComputeSRGBToWorkingMatrix(s_workingColorSpace, s_defaultAdaptationMethod);
+	s_workingToOutputDirty = true;
+	s_outputGamut = outputGamut;
+	s_outputEotf = outputEotf;
+	s_backbufferBitDepth = NormalizeBackbufferBitDepth(backbufferBitDepth);
 
 	LOG(LogColorManagement, Info, L"ColorManagement: Working space = %s",
 		WorkingColorSpacePresetToString(s_workingPreset).c_str());
@@ -544,6 +724,131 @@ ChromaticAdaptationMethod ColorManagement::GetDefaultAdaptationMethod()
 		InitializeDefault();
 	}
 	return s_defaultAdaptationMethod;
+}
+
+uint32_t ColorManagement::GetBackbufferBitDepth()
+{
+	if (!s_initialized)
+	{
+		InitializeDefault();
+	}
+	return s_backbufferBitDepth;
+}
+
+OutputGamut ColorManagement::GetOutputGamut()
+{
+	if (!s_initialized)
+	{
+		InitializeDefault();
+	}
+	return s_outputGamut;
+}
+
+EOTF ColorManagement::GetOutputEotf()
+{
+	if (!s_initialized)
+	{
+		InitializeDefault();
+	}
+	return s_outputEotf;
+}
+
+ColorManagement::SwapChainColorPlan ColorManagement::BuildSwapChainColorPlan(ColorManagementPriority priority,
+	bool hdrSupported)
+{
+	SwapChainColorPlan plan;
+	const uint32_t backbufferBitDepth = GetBackbufferBitDepth();
+	const EOTF configEotf = GetOutputEotf();
+	const bool hdrIntent = IsHdrIntent(configEotf);
+
+	if (priority == ColorManagementPriority::PreferDisplay)
+	{
+		if (hdrIntent && hdrSupported)
+		{
+			plan.format = RHIEnum::Format::RGBA16_FLOAT;
+			plan.colorSpace = RHIEnum::ColorSpace::HDR_G10_P709;
+		}
+		else
+		{
+			plan.format = ResolveBackbufferFormat(backbufferBitDepth);
+			plan.colorSpace = RHIEnum::ColorSpace::SDR_G22_P709;
+		}
+		return plan;
+	}
+
+	if (configEotf == EOTF::ScRGB)
+	{
+		plan.format = RHIEnum::Format::RGBA16_FLOAT;
+		plan.colorSpace = RHIEnum::ColorSpace::HDR_G10_P709;
+		return plan;
+	}
+	if (hdrIntent)
+	{
+		plan.format = ResolveBackbufferFormat(backbufferBitDepth);
+		plan.colorSpace = RHIEnum::ColorSpace::HDR_G2084_P2020;
+		return plan;
+	}
+
+	plan.format = ResolveBackbufferFormat(backbufferBitDepth);
+	plan.colorSpace = RHIEnum::ColorSpace::SDR_G22_P709;
+	return plan;
+}
+
+namespace
+{
+	ColorSpace GetOutputColorSpace(OutputGamut outputGamut)
+	{
+		ColorSpace space;
+		switch (outputGamut)
+		{
+		case OutputGamut::DisplayP3:
+			space.primaries.red = { 0.6800f, 0.3200f };
+			space.primaries.green = { 0.2650f, 0.6900f };
+			space.primaries.blue = { 0.1500f, 0.0600f };
+			space.whitePoint = { 0.3127f, 0.3290f };
+			break;
+		case OutputGamut::BT2020:
+			space.primaries.red = { 0.7080f, 0.2920f };
+			space.primaries.green = { 0.1700f, 0.7970f };
+			space.primaries.blue = { 0.1310f, 0.0460f };
+			space.whitePoint = { 0.3127f, 0.3290f };
+			break;
+		case OutputGamut::SCRGB:
+		case OutputGamut::SRGB:
+		default:
+			space.primaries.red = { 0.64f, 0.33f };
+			space.primaries.green = { 0.30f, 0.60f };
+			space.primaries.blue = { 0.15f, 0.06f };
+			space.whitePoint = { 0.3127f, 0.3290f };
+			break;
+		}
+		space.RecomputeMatrices();
+		return space;
+	}
+}
+
+Math::Matrix3 ColorManagement::GetWorkingToOutputMatrix(OutputGamut outputGamut)
+{
+	if (!s_initialized)
+	{
+		InitializeDefault();
+	}
+
+	if (!s_workingToOutputDirty && s_cachedOutputGamut == outputGamut)
+	{
+		return s_workingToOutputMatrix;
+	}
+
+	const ColorSpace outputSpace = GetOutputColorSpace(outputGamut);
+	const Math::Matrix3 adaptation = ComputeChromaticAdaptationMatrix(
+		s_workingColorSpace.whitePoint,
+		outputSpace.whitePoint,
+		s_defaultAdaptationMethod);
+
+	s_workingToOutputMatrix = outputSpace.XYZtoRGB * (adaptation * s_workingColorSpace.RGBtoXYZ);
+	s_cachedOutputGamut = outputGamut;
+	s_workingToOutputDirty = false;
+	return s_workingToOutputMatrix;
 }
 
 std::wstring ColorManagement::WorkingColorSpacePresetToString(WorkingColorSpacePreset preset)
@@ -613,9 +918,11 @@ bool ColorManagement::SetWorkingColorSpaceOverride(WorkingColorSpacePreset prese
 	s_workingColorSpace = newSpace;
 	s_workingPreset = preset;
 	s_srgbToWorkingMatrix = ComputeSRGBToWorkingMatrix(s_workingColorSpace, s_defaultAdaptationMethod);
+	s_workingToOutputDirty = true;
 
 	if (!WriteWorkingColorSpaceConfig(configPath,
-		WorkingColorSpacePresetToString(preset), definition, s_defaultAdaptationMethod))
+		WorkingColorSpacePresetToString(preset), definition, s_defaultAdaptationMethod,
+		s_backbufferBitDepth, s_outputGamut, s_outputEotf))
 	{
 		LOG(LogColorManagement, Warning, L"ColorManagement: Failed to write config to %s.", configPath.c_str());
 	}
@@ -630,6 +937,97 @@ bool ColorManagement::SetWorkingColorSpaceOverride(WorkingColorSpacePreset prese
 
 	LOG(LogColorManagement, Info, L"ColorManagement: Working space overridden to %s. Restart required to persist changes.",
 		WorkingColorSpacePresetToString(s_workingPreset).c_str());
+	BroadcastColorManagementChange(ColorManagementChange::WorkingColorSpace);
+	return true;
+}
+
+bool ColorManagement::SetBackbufferBitDepth(uint32_t bitDepth, const std::wstring& configPath)
+{
+	if (!s_initialized)
+	{
+		InitializeFromConfig(configPath);
+	}
+
+	const uint32_t normalized = NormalizeBackbufferBitDepth(bitDepth);
+	if (s_backbufferBitDepth == normalized)
+	{
+		return true;
+	}
+
+	s_backbufferBitDepth = normalized;
+
+	WorkingColorSpaceDefinition definition;
+	definition.primaries = s_workingColorSpace.primaries;
+	definition.whitePoint = s_workingColorSpace.whitePoint;
+	if (!WriteWorkingColorSpaceConfig(configPath,
+		WorkingColorSpacePresetToString(s_workingPreset), definition, s_defaultAdaptationMethod,
+		s_backbufferBitDepth, s_outputGamut, s_outputEotf))
+	{
+		LOG(LogColorManagement, Warning, L"ColorManagement: Failed to write config to %s.", configPath.c_str());
+	}
+
+	BroadcastColorManagementChange(ColorManagementChange::BackbufferBitDepth);
+	return true;
+}
+
+bool ColorManagement::SetOutputGamutOverride(OutputGamut outputGamut, const std::wstring& configPath)
+{
+	if (!s_initialized)
+	{
+		InitializeFromConfig(configPath);
+	}
+
+	if (s_outputGamut == outputGamut)
+	{
+		return true;
+	}
+
+	s_outputGamut = outputGamut;
+	s_workingToOutputDirty = true;
+
+	WorkingColorSpaceDefinition definition;
+	definition.primaries = s_workingColorSpace.primaries;
+	definition.whitePoint = s_workingColorSpace.whitePoint;
+	if (!WriteWorkingColorSpaceConfig(configPath,
+		WorkingColorSpacePresetToString(s_workingPreset), definition, s_defaultAdaptationMethod,
+		s_backbufferBitDepth, s_outputGamut, s_outputEotf))
+	{
+		LOG(LogColorManagement, Warning, L"ColorManagement: Failed to write config to %s.", configPath.c_str());
+	}
+
+	LOG(LogColorManagement, Info, L"ColorManagement: Output gamut overridden to %s.",
+		OutputGamutToString(s_outputGamut).c_str());
+	BroadcastColorManagementChange(ColorManagementChange::OutputGamut);
+	return true;
+}
+
+bool ColorManagement::SetOutputEotfOverride(EOTF eotf, const std::wstring& configPath)
+{
+	if (!s_initialized)
+	{
+		InitializeFromConfig(configPath);
+	}
+
+	if (s_outputEotf == eotf)
+	{
+		return true;
+	}
+
+	s_outputEotf = eotf;
+
+	WorkingColorSpaceDefinition definition;
+	definition.primaries = s_workingColorSpace.primaries;
+	definition.whitePoint = s_workingColorSpace.whitePoint;
+	if (!WriteWorkingColorSpaceConfig(configPath,
+		WorkingColorSpacePresetToString(s_workingPreset), definition, s_defaultAdaptationMethod,
+		s_backbufferBitDepth, s_outputGamut, s_outputEotf))
+	{
+		LOG(LogColorManagement, Warning, L"ColorManagement: Failed to write config to %s.", configPath.c_str());
+	}
+
+	LOG(LogColorManagement, Info, L"ColorManagement: Output EOTF overridden to %s.",
+		EotfToString(s_outputEotf).c_str());
+	BroadcastColorManagementChange(ColorManagementChange::Eotf);
 	return true;
 }
 

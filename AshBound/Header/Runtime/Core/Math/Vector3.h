@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <cstdint>
 #include "Runtime/Core/String.h"
 
 namespace Math
@@ -155,4 +156,5 @@ namespace Math
 
 	using Vector3 = TVector3<float>;
 	using Vector3d = TVector3<double>;
+	using IntVector3 = TVector3<int32_t>;
 }

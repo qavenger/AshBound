@@ -4,19 +4,27 @@
 
 #include "Runtime/Core/Platform/PlatformMonitorHandle.h"
 
-struct WindowsMonitorHandle
+/// Windows-specific monitor handle implementation
+class WindowsMonitorHandle : public PlatformMonitorHandle
 {
-	HMONITOR handle = nullptr;
+public:
+	explicit WindowsMonitorHandle(HMONITOR handle = nullptr);
 
-	bool IsValid() const { return handle != nullptr; }
+	// PlatformMonitorHandle interface
+	bool IsValid() const override;
+	void* GetNativeHandle() const override;
+	bool Equals(const PlatformMonitorHandle* other) const override;
+	size_t GetHash() const override;
 
-	PlatformMonitorHandle ToPlatformHandle() const
-	{
-		return PlatformMonitorHandle{ reinterpret_cast<void*>(handle) };
-	}
+	/// Get the native HMONITOR handle
+	HMONITOR GetHandle() const { return m_handle; }
 
-	static WindowsMonitorHandle FromPlatformHandle(const PlatformMonitorHandle& handle)
-	{
-		return WindowsMonitorHandle{ reinterpret_cast<HMONITOR>(handle.handle) };
-	}
+	/// Create a WindowsMonitorHandle from a native HMONITOR
+	static PlatformMonitorHandlePtr Create(HMONITOR handle);
+
+protected:
+	bool TrySetHdrEnabled(bool enable) override;
+
+private:
+	HMONITOR m_handle = nullptr;
 };

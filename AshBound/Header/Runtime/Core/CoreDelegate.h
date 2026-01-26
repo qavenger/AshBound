@@ -4,30 +4,13 @@
 #include <vector>
 
 #include "Runtime/Core/Delegates/Delegate.h"
-#include "Runtime/Core/DisplayManager.h"
+#include "Runtime/Core/DisplayInfo.h"
 #include "Runtime/Core/Platform/PlatformMonitorHandle.h"
 #include "Runtime/Core/Platform/PlatformWindowHandle.h"
 
-struct WindowSizeChangedInfo
-{
-	PlatformWindowHandle window = {};
-	int width = 0;
-	int height = 0;
-};
-
-struct WindowMovedInfo
-{
-	PlatformWindowHandle window = {};
-	int x = 0;
-	int y = 0;
-};
-
-struct WindowDisplayChangedInfo
-{
-	PlatformWindowHandle window = {};
-	PlatformMonitorHandle previousMonitor = {};
-	PlatformMonitorHandle currentMonitor = {};
-};
+// ============================================================================
+// Platform-level events (from PlatformViewport)
+// ============================================================================
 
 struct DisplayConfigurationChangedInfo
 {
@@ -52,11 +35,35 @@ struct DisplaySettingsChangedInfo
 	intptr_t lParam = 0;
 };
 
-struct HdrStateChangedInfo
+// ============================================================================
+// DisplaySubsystem events
+// ============================================================================
+
+enum class DisplayStateChangeType : uint32_t
 {
-	PlatformWindowHandle window = {};
-	bool hdrSupported = false;
-	bool hdrActive = false;
+	None = 0,
+	HdrStateChanged = 1u << 0,
+	ResolutionChanged = 1u << 1,
+	RefreshRateChanged = 1u << 2,
+	DeviceAdded = 1u << 3,
+	DeviceRemoved = 1u << 4,
+	All = 0xFFFFFFFF
+};
+
+inline DisplayStateChangeType operator|(DisplayStateChangeType a, DisplayStateChangeType b)
+{
+	return static_cast<DisplayStateChangeType>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
+}
+
+inline DisplayStateChangeType operator&(DisplayStateChangeType a, DisplayStateChangeType b)
+{
+	return static_cast<DisplayStateChangeType>(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
+}
+
+struct DisplayStateChangedInfo
+{
+	PlatformMonitorHandlePtr monitor;
+	DisplayStateChangeType changeType = DisplayStateChangeType::None;
 };
 
 struct DisplayCacheRefreshedInfo
@@ -64,32 +71,77 @@ struct DisplayCacheRefreshedInfo
 	std::vector<DisplayInfo> displays;
 };
 
+// ============================================================================
+// Viewport events
+// ============================================================================
+
+enum class ViewportChangeType : uint32_t
+{
+	None = 0,
+	Size = 1u << 0,
+	Position = 1u << 1,
+	Display = 1u << 2,
+	HdrPreference = 1u << 3,
+	WindowMode = 1u << 4,
+	Minimized = 1u << 5,
+	Maximized = 1u << 6,
+	All = 0xFFFFFFFF
+};
+
+inline ViewportChangeType operator|(ViewportChangeType a, ViewportChangeType b)
+{
+	return static_cast<ViewportChangeType>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b));
+}
+
+inline ViewportChangeType operator&(ViewportChangeType a, ViewportChangeType b)
+{
+	return static_cast<ViewportChangeType>(static_cast<uint32_t>(a) & static_cast<uint32_t>(b));
+}
+
+struct ViewportChangedInfo
+{
+	PlatformWindowHandle window = {};
+	ViewportChangeType changeType = ViewportChangeType::None;
+};
+
+// ============================================================================
+// ColorManagement events
+// ============================================================================
+
+struct ColorManagementChangedInfo
+{
+	uint32_t changedMask = 0;
+};
+
+enum class ColorManagementChange : uint32_t
+{
+	WorkingColorSpace = 1u << 0,
+	OutputGamut = 1u << 1,
+	Eotf = 1u << 2,
+	BackbufferBitDepth = 1u << 3
+};
+
 class CoreDelegate
 {
 public:
-	using WindowSizeChangedCallback = Delegate<void(const WindowSizeChangedInfo&)>;
-	using WindowMovedCallback = Delegate<void(const WindowMovedInfo&)>;
-	using WindowDisplayChangedCallback = Delegate<void(const WindowDisplayChangedInfo&)>;
+	// Platform-level callbacks
 	using DisplayConfigurationChangedCallback = Delegate<void(const DisplayConfigurationChangedInfo&)>;
 	using DisplayDevicesChangedCallback = Delegate<void(const DisplayDevicesChangedInfo&)>;
 	using DisplaySettingsChangedCallback = Delegate<void(const DisplaySettingsChangedInfo&)>;
-	using HdrStateChangedCallback = Delegate<void(const HdrStateChangedInfo&)>;
+
+	// DisplaySubsystem callbacks
+	using DisplayStateChangedCallback = Delegate<void(const DisplayStateChangedInfo&)>;
 	using DisplayCacheRefreshedCallback = Delegate<void(const DisplayCacheRefreshedInfo&)>;
 
-	/// callback signature: void(const WindowSizeChangedInfo& info)
-	static DelegateHandle AddWindowSizeChangedCallback(WindowSizeChangedCallback callback);
-	static bool RemoveWindowSizeChangedCallback(const DelegateHandle& handle);
-	static void ClearWindowSizeChangedCallbacks();
+	// Viewport callbacks
+	using ViewportChangedCallback = Delegate<void(const ViewportChangedInfo&)>;
 
-	/// callback signature: void(const WindowMovedInfo& info)
-	static DelegateHandle AddWindowMovedCallback(WindowMovedCallback callback);
-	static bool RemoveWindowMovedCallback(const DelegateHandle& handle);
-	static void ClearWindowMovedCallbacks();
+	// ColorManagement callbacks
+	using ColorManagementChangedCallback = Delegate<void(const ColorManagementChangedInfo&)>;
 
-	/// callback signature: void(const WindowDisplayChangedInfo& info)
-	static DelegateHandle AddWindowDisplayChangedCallback(WindowDisplayChangedCallback callback);
-	static bool RemoveWindowDisplayChangedCallback(const DelegateHandle& handle);
-	static void ClearWindowDisplayChangedCallbacks();
+	// ========================================================================
+	// Platform-level events (from PlatformViewport)
+	// ========================================================================
 
 	/// callback signature: void(const DisplayConfigurationChangedInfo& info)
 	static DelegateHandle AddDisplayConfigurationChangedCallback(DisplayConfigurationChangedCallback callback);
@@ -106,22 +158,47 @@ public:
 	static bool RemoveDisplaySettingsChangedCallback(const DelegateHandle& handle);
 	static void ClearDisplaySettingsChangedCallbacks();
 
-	/// callback signature: void(const HdrStateChangedInfo& info)
-	static DelegateHandle AddHdrStateChangedCallback(HdrStateChangedCallback callback);
-	static bool RemoveHdrStateChangedCallback(const DelegateHandle& handle);
-	static void ClearHdrStateChangedCallbacks();
+	// ========================================================================
+	// DisplaySubsystem events
+	// ========================================================================
+
+	/// callback signature: void(const DisplayStateChangedInfo& info)
+	static DelegateHandle AddDisplayStateChangedCallback(DisplayStateChangedCallback callback);
+	static bool RemoveDisplayStateChangedCallback(const DelegateHandle& handle);
+	static void ClearDisplayStateChangedCallbacks();
 
 	/// callback signature: void(const DisplayCacheRefreshedInfo& info)
 	static DelegateHandle AddDisplayCacheRefreshedCallback(DisplayCacheRefreshedCallback callback);
 	static bool RemoveDisplayCacheRefreshedCallback(const DelegateHandle& handle);
 	static void ClearDisplayCacheRefreshedCallbacks();
 
-	static void BroadcastWindowSizeChanged(const WindowSizeChangedInfo& info);
-	static void BroadcastWindowMoved(const WindowMovedInfo& info);
-	static void BroadcastWindowDisplayChanged(const WindowDisplayChangedInfo& info);
+	// ========================================================================
+	// Viewport events
+	// ========================================================================
+
+	/// callback signature: void(const ViewportChangedInfo& info)
+	static DelegateHandle AddViewportChangedCallback(ViewportChangedCallback callback);
+	static bool RemoveViewportChangedCallback(const DelegateHandle& handle);
+	static void ClearViewportChangedCallbacks();
+
+	// ========================================================================
+	// ColorManagement events
+	// ========================================================================
+
+	/// callback signature: void(const ColorManagementChangedInfo& info)
+	static DelegateHandle AddColorManagementChangedCallback(ColorManagementChangedCallback callback);
+	static bool RemoveColorManagementChangedCallback(const DelegateHandle& handle);
+	static void ClearColorManagementChangedCallbacks();
+
+	// ========================================================================
+	// Broadcast methods
+	// ========================================================================
+
 	static void BroadcastDisplayConfigurationChanged(const DisplayConfigurationChangedInfo& info);
 	static void BroadcastDisplayDevicesChanged(const DisplayDevicesChangedInfo& info);
 	static void BroadcastDisplaySettingsChanged(const DisplaySettingsChangedInfo& info);
-	static void BroadcastHdrStateChanged(const HdrStateChangedInfo& info);
+	static void BroadcastDisplayStateChanged(const DisplayStateChangedInfo& info);
 	static void BroadcastDisplayCacheRefreshed(const DisplayCacheRefreshedInfo& info);
+	static void BroadcastViewportChanged(const ViewportChangedInfo& info);
+	static void BroadcastColorManagementChanged(const ColorManagementChangedInfo& info);
 };

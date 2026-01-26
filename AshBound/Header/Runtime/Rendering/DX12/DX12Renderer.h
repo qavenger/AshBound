@@ -3,9 +3,12 @@
 #include "Runtime/Rendering/RHI/RHI.h"
 #include "Runtime/Rendering/DX12/DX12Device.h"
 #include "Runtime/Rendering/DX12/DX12CommandQueue.h"
+#include "Runtime/Rendering/DX12/DX12ComputeCommandQueue.h"
+#include "Runtime/Rendering/DX12/DX12CopyCommandQueue.h"
 #include "Runtime/Rendering/DX12/DX12CommandList.h"
 #include "Runtime/Rendering/DX12/DX12SwapChain.h"
 
+#include <windows.h>
 #include <dxgi1_6.h>
 #include <wrl/client.h>
 
@@ -17,11 +20,14 @@ public:
 	void EndFrame() override;
 	void Present() override;
 	void Resize(uint32_t width, uint32_t height) override;
+	bool RecreateSwapChain(uint32_t width, uint32_t height, RHIEnum::Format backbufferFormat, RHIEnum::ColorSpace colorSpace) override;
 	void Shutdown() override;
 
 	IRHIDevice* GetDevice() override;
 	IRHISwapChain* GetSwapChain() override;
 	IRHICommandQueue* GetCommandQueue() override;
+	IRHIComputeCommandQueue* GetComputeCommandQueue() override;
+	IRHICopyCommandQueue* GetCopyCommandQueue() override;
 	IRHICommandList* GetCommandList() override;
 
 private:
@@ -35,11 +41,14 @@ private:
 	uint32_t m_width = 0;
 	uint32_t m_height = 0;
 	uint32_t m_frameIndex = 0;
+	HWND m_windowHandle = nullptr;
 
 	Microsoft::WRL::ComPtr<IDXGIFactory4> m_factory;
 
 	DX12Device m_device;
 	DX12CommandQueue m_commandQueue;
+	DX12ComputeCommandQueue m_computeCommandQueue;
+	DX12CopyCommandQueue m_copyCommandQueue;
 	DX12CommandList m_commandList;
 	DX12SwapChain m_swapChain;
 };

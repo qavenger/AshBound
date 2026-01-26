@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Runtime/Core/CoreDelegate.h"
+#include "Runtime/Core/Input.h"
 
 class ViewportSubsystem;
 struct ViewportInfo;
@@ -12,11 +13,11 @@ public:
 	static void Shutdown();
 
 private:
-	static void HandleWindowMoved(const WindowMovedInfo& info);
-	static void HandleHdrStateChanged(const HdrStateChangedInfo& info);
+	static void HandleViewportChanged(const ViewportChangedInfo& info);
+	static void HandleBackbufferToggle(const EnhancedTriggerEventInfo& info);
 	static void LogViewportInfo(const wchar_t* eventName, const ViewportInfo& info, PlatformWindowHandle window);
 
 	static ViewportSubsystem* s_viewportSubsystem;
-	static DelegateHandle s_windowMovedHandle;
-	static DelegateHandle s_hdrStateHandle;
+	static DelegateHandle s_viewportChangedHandle;
+	static EnhancedTriggerEventCallbackHandle s_backbufferToggleHandle;
 };

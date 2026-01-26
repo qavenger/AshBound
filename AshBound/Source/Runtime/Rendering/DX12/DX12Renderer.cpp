@@ -1,5 +1,7 @@
 #include "Runtime/Rendering/DX12/DX12Renderer.h"
 
+#include "Runtime/Core/Platform/PlatformViewport.h"
+
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <wrl/client.h>
@@ -16,14 +18,22 @@ bool DX12Renderer::Initialize(const RHIRendererInitInfo& info)
 		return true;
 	}
 
-	if (!info.windowHandle || info.width == 0 || info.height == 0)
+	if (!info.viewport || info.width == 0 || info.height == 0)
 	{
 		return false;
 	}
 
+	PlatformWindowHandle windowHandle = info.viewport->GetWindowHandle();
+	if (!windowHandle.IsValid())
+	{
+		return false;
+	}
+	HWND nativeWindowHandle = static_cast<HWND>(windowHandle.handle);
+
 	m_vsync = info.enableVsync;
 	m_width = info.width;
 	m_height = info.height;
+	m_windowHandle = nativeWindowHandle;
 
 	if (info.enableDebugLayer)
 	{
@@ -50,12 +60,23 @@ bool DX12Renderer::Initialize(const RHIRendererInitInfo& info)
 		return false;
 	}
 
+	if (!m_computeCommandQueue.Initialize(m_device.GetDevice()))
+	{
+		return false;
+	}
+
+	if (!m_copyCommandQueue.Initialize(m_device.GetDevice()))
+	{
+		return false;
+	}
+
 	if (!m_commandList.Initialize(m_device.GetDevice()))
 	{
 		return false;
 	}
 
-	if (!m_swapChain.Initialize(info.windowHandle, m_factory.Get(), m_device.GetDevice(), m_commandQueue.GetQueue(), m_width, m_height, 2))
+	if (!m_swapChain.Initialize(m_windowHandle, m_factory.Get(), m_device.GetDevice(), m_commandQueue.GetQueue(),
+		m_width, m_height, info.backbufferFormat, info.colorSpace, 2))
 	{
 		return false;
 	}
@@ -131,6 +152,23 @@ void DX12Renderer::Resize(uint32_t width, uint32_t height)
 	m_swapChain.Resize(width, height);
 }
 
+bool DX12Renderer::RecreateSwapChain(uint32_t width, uint32_t height, RHIEnum::Format backbufferFormat, RHIEnum::ColorSpace colorSpace)
+{
+	if (!m_initialized || !m_windowHandle || width == 0 || height == 0)
+	{
+		return false;
+	}
+
+	m_commandQueue.Flush();
+	m_swapChain.Shutdown();
+
+	m_width = width;
+	m_height = height;
+
+	return m_swapChain.Initialize(m_windowHandle, m_factory.Get(), m_device.GetDevice(),
+		m_commandQueue.GetQueue(), m_width, m_height, backbufferFormat, colorSpace, 2);
+}
+
 void DX12Renderer::Shutdown()
 {
 	if (!m_initialized)
@@ -141,9 +179,12 @@ void DX12Renderer::Shutdown()
 	m_commandQueue.Flush();
 	m_swapChain.Shutdown();
 	m_commandList.Shutdown();
+	m_computeCommandQueue.Shutdown();
+	m_copyCommandQueue.Shutdown();
 	m_commandQueue.Shutdown();
 	m_device.Shutdown();
 	m_factory.Reset();
+	m_windowHandle = nullptr;
 	m_initialized = false;
 }
 
@@ -160,6 +201,16 @@ IRHISwapChain* DX12Renderer::GetSwapChain()
 IRHICommandQueue* DX12Renderer::GetCommandQueue()
 {
 	return &m_commandQueue;
+}
+
+IRHIComputeCommandQueue* DX12Renderer::GetComputeCommandQueue()
+{
+	return &m_computeCommandQueue;
+}
+
+IRHICopyCommandQueue* DX12Renderer::GetCopyCommandQueue()
+{
+	return &m_copyCommandQueue;
 }
 
 IRHICommandList* DX12Renderer::GetCommandList()

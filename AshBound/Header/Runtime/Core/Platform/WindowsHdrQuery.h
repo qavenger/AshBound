@@ -1,17 +1,19 @@
 #pragma once
 
-#include "Runtime/Core/Platform/WindowsMonitorHandle.h"
+#include <Windows.h>
 
 struct WindowsHdrInfo
 {
 	bool supported = false;
 	bool active = false;
+	bool activeKnown = false;
 	float maxLuminance = 0.0f;
 	float minLuminanceLog10 = 0.0f;
+	float sdrWhiteLevelNits = 0.0f;
 };
 
 class WindowsHdrQuery
 {
 public:
-	static bool TryQuery(const WindowsMonitorHandle& monitor, WindowsHdrInfo& outInfo);
+	static bool TryQuery(HMONITOR monitor, WindowsHdrInfo& outInfo);
 };

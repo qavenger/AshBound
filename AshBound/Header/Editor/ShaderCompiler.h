@@ -42,6 +42,15 @@ public:
 		std::vector<DxcDefine> defines;
 		std::vector<std::wstring> includeDirectories;
 		std::vector<std::wstring> arguments;
+		bool writeDxil = false;
+		std::wstring outputDirectory;
+		std::wstring outputName;
+	};
+
+	struct ShaderHotReloadItem
+	{
+		std::wstring filePath;
+		CompileOptions options;
 	};
 
 	struct CompileResult
@@ -52,4 +61,8 @@ public:
 	};
 
 	static CompileResult CompileFromFile(const std::wstring& filePath, const CompileOptions& options);
+	static void ClearHotReloadShaders();
+	static void AddHotReloadShader(const ShaderHotReloadItem& item);
+	static void GetHotReloadShaders(std::vector<ShaderHotReloadItem>& outItems);
+	static bool CompileHotReloadShaders(std::vector<CompileResult>& outResults);
 };

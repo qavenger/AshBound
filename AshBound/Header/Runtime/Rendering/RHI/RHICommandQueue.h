@@ -10,3 +10,15 @@ public:
 	virtual void Execute(IRHICommandList* commandList) = 0;
 	virtual void Flush() = 0;
 };
+
+class IRHIComputeCommandQueue : public IRHICommandQueue
+{
+public:
+	~IRHIComputeCommandQueue() override = default;
+};
+
+class IRHICopyCommandQueue : public IRHICommandQueue
+{
+public:
+	~IRHICopyCommandQueue() override = default;
+};

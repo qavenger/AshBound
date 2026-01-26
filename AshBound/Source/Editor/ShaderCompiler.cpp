@@ -4,6 +4,9 @@
 #include <wrl/client.h>
 
 #include <cstring>
+#include <filesystem>
+#include <fstream>
+#include <vector>
 
 #pragma comment(lib, "dxcompiler.lib")
 
@@ -11,6 +14,8 @@ using Microsoft::WRL::ComPtr;
 
 namespace
 {
+	std::vector<ShaderCompiler::ShaderHotReloadItem> s_hotReloadShaders;
+
 	bool GetDxcInterfaces(ComPtr<IDxcUtils>& outUtils, ComPtr<IDxcCompiler3>& outCompiler)
 	{
 		thread_local ComPtr<IDxcUtils> tlsUtils;
@@ -132,6 +137,24 @@ namespace
 				outResult.errors = Utf8ToWide(errorText);
 			}
 		}
+	}
+
+	void WriteShaderBytecode(const std::wstring& outputDir, const std::wstring& name, const std::vector<uint8_t>& bytecode)
+	{
+		if (outputDir.empty() || name.empty() || bytecode.empty())
+		{
+			return;
+		}
+		std::filesystem::path outPath(outputDir);
+		std::filesystem::create_directories(outPath);
+		outPath /= name;
+		outPath.replace_extension(L".dxil");
+		std::ofstream outFile(outPath, std::ios::binary);
+		if (!outFile)
+		{
+			return;
+		}
+		outFile.write(reinterpret_cast<const char*>(bytecode.data()), static_cast<std::streamsize>(bytecode.size()));
 	}
 }
 
@@ -270,5 +293,41 @@ ShaderCompiler::CompileResult ShaderCompiler::CompileFromFile(const std::wstring
 	const uint8_t* bytecodePtr = static_cast<const uint8_t*>(objectBlob->GetBufferPointer());
 	result.bytecode.assign(bytecodePtr, bytecodePtr + objectBlob->GetBufferSize());
 	result.succeeded = true;
+	if (options.writeDxil)
+	{
+		WriteShaderBytecode(options.outputDirectory, options.outputName, result.bytecode);
+	}
 	return result;
+}
+
+void ShaderCompiler::ClearHotReloadShaders()
+{
+	s_hotReloadShaders.clear();
+}
+
+void ShaderCompiler::AddHotReloadShader(const ShaderHotReloadItem& item)
+{
+	s_hotReloadShaders.push_back(item);
+}
+
+void ShaderCompiler::GetHotReloadShaders(std::vector<ShaderHotReloadItem>& outItems)
+{
+	outItems = s_hotReloadShaders;
+}
+
+bool ShaderCompiler::CompileHotReloadShaders(std::vector<CompileResult>& outResults)
+{
+	outResults.clear();
+	outResults.reserve(s_hotReloadShaders.size());
+	bool allSucceeded = true;
+	for (const ShaderHotReloadItem& item : s_hotReloadShaders)
+	{
+		CompileResult result = CompileFromFile(item.filePath, item.options);
+		if (!result.succeeded)
+		{
+			allSucceeded = false;
+		}
+		outResults.push_back(std::move(result));
+	}
+	return allSucceeded;
 }

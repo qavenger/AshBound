@@ -54,60 +54,25 @@ namespace
 		}
 	}
 
-	std::vector<DelegateEntry<CoreDelegate::WindowSizeChangedCallback>> s_windowSizeChangedCallbacks;
-	std::vector<DelegateEntry<CoreDelegate::WindowMovedCallback>> s_windowMovedCallbacks;
-	std::vector<DelegateEntry<CoreDelegate::WindowDisplayChangedCallback>> s_windowDisplayChangedCallbacks;
+	// Platform-level event callbacks
 	std::vector<DelegateEntry<CoreDelegate::DisplayConfigurationChangedCallback>> s_displayConfigurationChangedCallbacks;
 	std::vector<DelegateEntry<CoreDelegate::DisplayDevicesChangedCallback>> s_displayDevicesChangedCallbacks;
 	std::vector<DelegateEntry<CoreDelegate::DisplaySettingsChangedCallback>> s_displaySettingsChangedCallbacks;
-	std::vector<DelegateEntry<CoreDelegate::HdrStateChangedCallback>> s_hdrStateChangedCallbacks;
+
+	// DisplaySubsystem event callbacks
+	std::vector<DelegateEntry<CoreDelegate::DisplayStateChangedCallback>> s_displayStateChangedCallbacks;
 	std::vector<DelegateEntry<CoreDelegate::DisplayCacheRefreshedCallback>> s_displayCacheRefreshedCallbacks;
+
+	// Viewport event callbacks
+	std::vector<DelegateEntry<CoreDelegate::ViewportChangedCallback>> s_viewportChangedCallbacks;
+
+	// ColorManagement event callbacks
+	std::vector<DelegateEntry<CoreDelegate::ColorManagementChangedCallback>> s_colorManagementChangedCallbacks;
 }
 
-DelegateHandle CoreDelegate::AddWindowSizeChangedCallback(WindowSizeChangedCallback callback)
-{
-	return AddDelegate(s_windowSizeChangedCallbacks, std::move(callback));
-}
-
-bool CoreDelegate::RemoveWindowSizeChangedCallback(const DelegateHandle& handle)
-{
-	return RemoveDelegate(s_windowSizeChangedCallbacks, handle);
-}
-
-void CoreDelegate::ClearWindowSizeChangedCallbacks()
-{
-	s_windowSizeChangedCallbacks.clear();
-}
-
-DelegateHandle CoreDelegate::AddWindowMovedCallback(WindowMovedCallback callback)
-{
-	return AddDelegate(s_windowMovedCallbacks, std::move(callback));
-}
-
-bool CoreDelegate::RemoveWindowMovedCallback(const DelegateHandle& handle)
-{
-	return RemoveDelegate(s_windowMovedCallbacks, handle);
-}
-
-void CoreDelegate::ClearWindowMovedCallbacks()
-{
-	s_windowMovedCallbacks.clear();
-}
-
-DelegateHandle CoreDelegate::AddWindowDisplayChangedCallback(WindowDisplayChangedCallback callback)
-{
-	return AddDelegate(s_windowDisplayChangedCallbacks, std::move(callback));
-}
-
-bool CoreDelegate::RemoveWindowDisplayChangedCallback(const DelegateHandle& handle)
-{
-	return RemoveDelegate(s_windowDisplayChangedCallbacks, handle);
-}
-
-void CoreDelegate::ClearWindowDisplayChangedCallbacks()
-{
-	s_windowDisplayChangedCallbacks.clear();
-}
+// ============================================================================
+// Platform-level events
+// ============================================================================
 
 DelegateHandle CoreDelegate::AddDisplayConfigurationChangedCallback(DisplayConfigurationChangedCallback callback)
 {
@@ -154,19 +119,23 @@ void CoreDelegate::ClearDisplaySettingsChangedCallbacks()
 	s_displaySettingsChangedCallbacks.clear();
 }
 
-DelegateHandle CoreDelegate::AddHdrStateChangedCallback(HdrStateChangedCallback callback)
+// ============================================================================
+// DisplaySubsystem events
+// ============================================================================
+
+DelegateHandle CoreDelegate::AddDisplayStateChangedCallback(DisplayStateChangedCallback callback)
 {
-	return AddDelegate(s_hdrStateChangedCallbacks, std::move(callback));
+	return AddDelegate(s_displayStateChangedCallbacks, std::move(callback));
 }
 
-bool CoreDelegate::RemoveHdrStateChangedCallback(const DelegateHandle& handle)
+bool CoreDelegate::RemoveDisplayStateChangedCallback(const DelegateHandle& handle)
 {
-	return RemoveDelegate(s_hdrStateChangedCallbacks, handle);
+	return RemoveDelegate(s_displayStateChangedCallbacks, handle);
 }
 
-void CoreDelegate::ClearHdrStateChangedCallbacks()
+void CoreDelegate::ClearDisplayStateChangedCallbacks()
 {
-	s_hdrStateChangedCallbacks.clear();
+	s_displayStateChangedCallbacks.clear();
 }
 
 DelegateHandle CoreDelegate::AddDisplayCacheRefreshedCallback(DisplayCacheRefreshedCallback callback)
@@ -184,20 +153,47 @@ void CoreDelegate::ClearDisplayCacheRefreshedCallbacks()
 	s_displayCacheRefreshedCallbacks.clear();
 }
 
-void CoreDelegate::BroadcastWindowSizeChanged(const WindowSizeChangedInfo& info)
+// ============================================================================
+// Viewport events
+// ============================================================================
+
+DelegateHandle CoreDelegate::AddViewportChangedCallback(ViewportChangedCallback callback)
 {
-	BroadcastDelegates(s_windowSizeChangedCallbacks, info);
+	return AddDelegate(s_viewportChangedCallbacks, std::move(callback));
 }
 
-void CoreDelegate::BroadcastWindowMoved(const WindowMovedInfo& info)
+bool CoreDelegate::RemoveViewportChangedCallback(const DelegateHandle& handle)
 {
-	BroadcastDelegates(s_windowMovedCallbacks, info);
+	return RemoveDelegate(s_viewportChangedCallbacks, handle);
 }
 
-void CoreDelegate::BroadcastWindowDisplayChanged(const WindowDisplayChangedInfo& info)
+void CoreDelegate::ClearViewportChangedCallbacks()
 {
-	BroadcastDelegates(s_windowDisplayChangedCallbacks, info);
+	s_viewportChangedCallbacks.clear();
 }
+
+// ============================================================================
+// ColorManagement events
+// ============================================================================
+
+DelegateHandle CoreDelegate::AddColorManagementChangedCallback(ColorManagementChangedCallback callback)
+{
+	return AddDelegate(s_colorManagementChangedCallbacks, std::move(callback));
+}
+
+bool CoreDelegate::RemoveColorManagementChangedCallback(const DelegateHandle& handle)
+{
+	return RemoveDelegate(s_colorManagementChangedCallbacks, handle);
+}
+
+void CoreDelegate::ClearColorManagementChangedCallbacks()
+{
+	s_colorManagementChangedCallbacks.clear();
+}
+
+// ============================================================================
+// Broadcast methods
+// ============================================================================
 
 void CoreDelegate::BroadcastDisplayConfigurationChanged(const DisplayConfigurationChangedInfo& info)
 {
@@ -214,12 +210,22 @@ void CoreDelegate::BroadcastDisplaySettingsChanged(const DisplaySettingsChangedI
 	BroadcastDelegates(s_displaySettingsChangedCallbacks, info);
 }
 
-void CoreDelegate::BroadcastHdrStateChanged(const HdrStateChangedInfo& info)
+void CoreDelegate::BroadcastDisplayStateChanged(const DisplayStateChangedInfo& info)
 {
-	BroadcastDelegates(s_hdrStateChangedCallbacks, info);
+	BroadcastDelegates(s_displayStateChangedCallbacks, info);
 }
 
 void CoreDelegate::BroadcastDisplayCacheRefreshed(const DisplayCacheRefreshedInfo& info)
 {
 	BroadcastDelegates(s_displayCacheRefreshedCallbacks, info);
+}
+
+void CoreDelegate::BroadcastViewportChanged(const ViewportChangedInfo& info)
+{
+	BroadcastDelegates(s_viewportChangedCallbacks, info);
+}
+
+void CoreDelegate::BroadcastColorManagementChanged(const ColorManagementChangedInfo& info)
+{
+	BroadcastDelegates(s_colorManagementChangedCallbacks, info);
 }

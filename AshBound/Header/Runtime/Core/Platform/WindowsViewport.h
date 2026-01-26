@@ -21,6 +21,7 @@ private:
 
 	LRESULT HandleMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	void UpdateMonitorChange(HWND hwnd);
+	void HandleSizeChanged(HWND hwnd);
 	void HandleExitSizeMove(HWND hwnd);
 
 private:

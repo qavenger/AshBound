@@ -111,6 +111,10 @@ LRESULT CALLBACK WindowsViewport::HandleMsgRedirect(HWND hwnd, UINT msg, WPARAM 
 
 LRESULT WindowsViewport::HandleMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	if (m_owner && m_owner->HandlePlatformMessage(msg, static_cast<uintptr_t>(wParam), static_cast<intptr_t>(lParam)))
+	{
+		return true;
+	}
 	switch (msg)
 	{
 	case WM_ENTERSIZEMOVE:
@@ -147,6 +151,12 @@ LRESULT WindowsViewport::HandleMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
 		}
 		break;
 	case WM_SIZE:
+		if (wParam != SIZE_MINIMIZED && !m_pendingSizeMove)
+		{
+			HandleSizeChanged(hwnd);
+		}
+		m_pendingSizeMove = true;
+		break;
 	case WM_MOVE:
 	case WM_WINDOWPOSCHANGED:
 	case WM_DPICHANGED:
@@ -164,8 +174,8 @@ void WindowsViewport::UpdateMonitorChange(HWND hwnd)
 	const HMONITOR currentMonitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
 	if (currentMonitor != m_lastMonitor && m_owner)
 	{
-		const PlatformMonitorHandle previous = WindowsMonitorHandle{ m_lastMonitor }.ToPlatformHandle();
-		const PlatformMonitorHandle current = WindowsMonitorHandle{ currentMonitor }.ToPlatformHandle();
+		const PlatformMonitorHandlePtr previous = WindowsMonitorHandle::Create(m_lastMonitor);
+		const PlatformMonitorHandlePtr current = WindowsMonitorHandle::Create(currentMonitor);
 		m_lastMonitor = currentMonitor;
 		m_owner->HandleNativeWindowDisplayChanged(previous, current);
 	}
@@ -248,6 +258,26 @@ void WindowsViewport::HandleExitSizeMove(HWND hwnd)
 
 	if (sizeChanged || positionChanged || m_pendingSizeMove)
 	{
+		UpdateMonitorChange(hwnd);
+	}
+}
+
+void WindowsViewport::HandleSizeChanged(HWND hwnd)
+{
+	RECT clientRect{};
+	if (!GetClientRect(hwnd, &clientRect))
+	{
+		return;
+	}
+
+	const int newWidth = clientRect.right - clientRect.left;
+	const int newHeight = clientRect.bottom - clientRect.top;
+	const bool sizeChanged = newWidth != m_lastClientWidth || newHeight != m_lastClientHeight;
+	if (sizeChanged && m_owner)
+	{
+		m_owner->HandleNativeWindowSizeChanged(newWidth, newHeight);
+		m_lastClientWidth = newWidth;
+		m_lastClientHeight = newHeight;
 		UpdateMonitorChange(hwnd);
 	}
 }
